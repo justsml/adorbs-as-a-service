@@ -2,21 +2,31 @@
   "name": "adorbs-as-a-service",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
+  "homepage": "https://github.com/justsml/adorbs-as-a-service",
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node tests",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "url": "https://github.com/justsml/adorbs-as-a-service.git"
+  },
+  "author": "Dan Levy Dan@DanLevy.net",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "morgan": "^1.9.1",
-    "nodemon": "^1.18.7"
+    "sharp": "^0.21.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.7",
+    "supertest": "^3.3.0"
   }
 }

@@ -16,7 +16,7 @@ app.use(cors({origin: true, credentials: true})) // <= Disable if you don't need
 // app.use('/', express.static('./build'))
 
 // TODO: ADD (MOUNT) YOUR MIDDLEWARE (ROUTES) HERE:
-// Example: app.use('/api/cat', require('./routes/cat'))
+Example: app.use('/api/v1', require('./routes/kitten'))
 
 // The following 2 `app.use`'s MUST follow ALL your routes/middleware
 app.use(notFound)
