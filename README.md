@@ -17,13 +17,19 @@ Here's the API goal:
 
 Example API Requests:
 
+Using service base URL: `https://adorbs-as-a-service.herokuapp.com/api/v1/`
+
 ##### Random Kitten Photo w/ Width=400 & Height=500
 
 `/api/v1/w400/h500`
 
+![](https://adorbs-as-a-service.herokuapp.com/api/v1/w400/h500 "Height=500 Width=400")
+
 ##### Random Kitten Photo w/ Width=400 & Height=500 & Rounded Corner
 
-`/api/v1/w400/h500?rounded=100`
+`/api/v1/w300/h300?rounded=100`
+
+![](https://adorbs-as-a-service.herokuapp.com/api/v1/w300/h300?rounded=100 "Rounded=100 Height=300 Width=300")
 
 
 > Side note: Let's use a route pattern, we could eventually test multiple methods for doing this sort of graphics work on a NodeJS server.
