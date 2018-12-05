@@ -33,6 +33,8 @@ function resizeImage(req, res, next) {
 
   const { rounded } = req.query
 
+  res.type('jpg')
+
   fs.createReadStream(rndImg)
     .on('error', next)
     .pipe(ImageFilters.resize(options))
