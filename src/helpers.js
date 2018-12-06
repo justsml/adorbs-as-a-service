@@ -41,7 +41,7 @@ const helpers = {
   getRandom() {
     const images = helpers.getImages()
     const idx = Math.floor(Math.random() * images.length)
-    console.log('idx:', idx, images.length)
+    // console.log('idx:', idx, images.length)
     return images[idx]
   },
 

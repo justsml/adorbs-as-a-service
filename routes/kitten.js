@@ -1,28 +1,28 @@
 // From Dan's Guides: https://github.com/justsml/guides/tree/master/express/setup-guide
-const sharp = require('sharp')
 const router = module.exports = require('express').Router()
-const helpers = require('../src/helpers.js')
 const fs = require('fs')
 const path = require('path')
+
+const imageJimp = require('../src/imageJimp.js')
+const imageSharp = require('../src/imageSharp.js')
+const helpers = require('../src/helpers.js')
 const {getRandom, getByIndex,
   getImages, toSize,
   echoStream} = helpers
 
-const kittens = getImages()
+router.get('/', getOptions, getAll)
+router.get('/:dimension1/:dimension2', getOptions, resizeSharp)
 
-// console.log('files:', kittens)
-// Standard CRUD routes:
+function getOptions(req, res, next) {
+  const {dimension1, dimension2} = req.params
+  const options = {
+    width: 420, height: 420,
+    rounded: null,
+    outputType: 'jpg',
+    resizeMode: 'cover'
+  }
+  options.imagePath = path.resolve('assets', getRandom())
 
-router.get('/', getAll)
-router.get('/:dimension1/:dimension2', resizeImage)
-
-
-function resizeImage(req, res, next) {
-  // console.log('getRandom()', getRandom())
-  const rndImg = path.resolve('assets', getRandom())
-  const options = {width: 420, height: 420}; // colorado defaults
-
-  const {dimension1, dimension2} = req.params;
   const isWidth = s => `${s}`.toLowerCase().indexOf('w') > -1
   const isHeight = s => `${s}`.toLowerCase().indexOf('h') > -1
   if (isWidth(dimension1)) options.width = toSize(dimension1)
@@ -30,53 +30,46 @@ function resizeImage(req, res, next) {
   if (isHeight(dimension1)) options.height = toSize(dimension1)
   if (isHeight(dimension2)) options.height = toSize(dimension2)
   // could break, missed cases, lets proceed! MVP!!!!
+  req.options = options
 
-  const { rounded, outputType, resizeMode = 'cover' } = req.query
+  next()
+}
 
-  res.type('jpg')
+function resizeSharp(req, res, next) {
+  if (!req.options || !req.options.width) return next(new Error('Invalid Options - Make sure Query Params are Parsed Correctly.'))
+  const { imagePath, rounded, outputType, resizeMode } = req.options
 
-  fs.createReadStream(rndImg)
+  res.type(outputType || 'jpg')
+
+  console.time('sharp.resize')
+  fs.createReadStream(imagePath)
     .on('error', next)
-    .pipe(ImageFilters.resize(options))
+    .on('end', () => console.timeEnd('sharp.resize'))
+    .pipe(ImageFilters.resize(req.options))
     .pipe(rounded > 0 && rounded <= 500 ? ImageFilters.roundCorners({...options, percent: rounded}) : echoStream())
     .pipe(res)
+}
 
-    // readableStream
-    // .pipe(roundedCornerResizer)
-    // .pipe(writableStream)
+function resizeJimp(req, res, next) {
+  if (!req.options || !req.options.width) return next(new Error('Invalid Options - Make sure Query Params are Parsed Correctly.'))
 
-  // res.status(200).json({  })
+  const { imagePath, rounded, outputType, resizeMode } = req.options
+
+  res.type(outputType || 'jpg')
+  console.time('jimp.resize')
+  res.on('finish', () => console.timeEnd('jimp.resize'))
+  imageSharp.resizeCover(req.options)
+    .then(buf => res.send(buf))
+    .catch(next)
 }
 
 
-const ImageFilters = {
-  resize({width, height}) {
-    return sharp()
-    .resize(width, height)
-    .on('error', err => console.error(err))
-  },
-
-  roundCorners({width, height, percent = 100}) {
-    const roundedCorners = Buffer.from(`
-    <svg>
-      <rect x="0" y="0" width="${width}" height="${height}" rx="${percent}" ry="${percent}" />
-    </svg>`)
-
-    const roundedCornerResizer = sharp()
-    .resize(width, height)
-    .overlayWith(roundedCorners, { cutout: true })
-    // .png()
-
-    return roundedCornerResizer
-  }
-
-}
 
 function getAll(req, res, next) {
   res.send(`<h3>Go to the <a href='https://github.com/justsml/adorbs-as-a-service'>README for instructions</a></h3>
   <!--
 
-  ${kittens}
+  ${getImages()}
 
   -->`)
 }
