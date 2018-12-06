@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { Transform } = require('stream');
+const { Duplex, Transform } = require('stream');
 
 
 
@@ -8,14 +8,23 @@ const { Transform } = require('stream');
 const helpers = {
   _images: [],
 
-  echoStream: ({writableObjectMode = true} = {}) => new Transform({
-    writableObjectMode: writableObjectMode,
+  echoStream({writableObjectMode = true} = {}) {
+    return new Transform({
+      writableObjectMode: writableObjectMode,
 
-    transform(chunk, encoding, callback) {
-      // Echo the data
-      callback(null, chunk);
-    }
-  }),
+      transform(chunk, encoding, callback) {
+        // Echo the data
+        callback(null, chunk);
+      }
+    })
+  },
+
+  bufferToStream(buffer) {
+    const stream = new Duplex();
+    stream.push(buffer);
+    stream.push(null);
+    return stream;
+  },
 
   toSize(str) {
     return parseInt(`${str}`.replace(/[^0-9]/g, ''), 10)

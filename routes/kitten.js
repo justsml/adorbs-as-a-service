@@ -31,14 +31,14 @@ function resizeImage(req, res, next) {
   if (isHeight(dimension2)) options.height = toSize(dimension2)
   // could break, missed cases, lets proceed! MVP!!!!
 
-  const { rounded } = req.query
+  const { rounded, outputType, resizeMode = 'cover' } = req.query
 
   res.type('jpg')
 
   fs.createReadStream(rndImg)
     .on('error', next)
     .pipe(ImageFilters.resize(options))
-    .pipe(rounded > 0 && rounded <= 100 ? ImageFilters.roundCorners({...options, percent: rounded}) : echoStream())
+    .pipe(rounded > 0 && rounded <= 500 ? ImageFilters.roundCorners({...options, percent: rounded}) : echoStream())
     .pipe(res)
 
     // readableStream
@@ -57,8 +57,9 @@ const ImageFilters = {
   },
 
   roundCorners({width, height, percent = 100}) {
-    const roundedCorners = Buffer.from(`<svg>
-    <rect x="0" y="0" width="${width}" height="${height}" rx="${percent}" ry="${percent}"/>
+    const roundedCorners = Buffer.from(`
+    <svg>
+      <rect x="0" y="0" width="${width}" height="${height}" rx="${percent}" ry="${percent}" />
     </svg>`)
 
     const roundedCornerResizer = sharp()
