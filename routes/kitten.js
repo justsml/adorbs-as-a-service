@@ -52,7 +52,12 @@ function resizeImage(req, res, next) {
 const ImageFilters = {
   resize({width, height}) {
     return sharp()
-    .resize(width, height)
+    .resize(width, height, {
+      // background: 'rgba(0, 0, 0, 255)',
+      fit: 'contain',
+      withoutEnlargement: true
+    })
+    // .gif()
     .on('error', err => console.error(err))
   },
 
@@ -62,7 +67,10 @@ const ImageFilters = {
     </svg>`)
 
     const roundedCornerResizer = sharp()
-    .resize(width, height)
+    .resize(width, height, {
+      fit: 'contain',
+      withoutEnlargement: true
+    })
     .overlayWith(roundedCorners, { cutout: true })
     // .png()
 
