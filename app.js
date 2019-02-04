@@ -12,7 +12,9 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(morgan(process.env.NODE_ENV !== 'production' ? 'dev' : 'combined'))
 app.use(cors({origin: true, credentials: true})) // <= Disable if you don't need CORS
-// TODO: Optional Static file handler:
+
+// TODO: ADD (MOUNT) YOUR MIDDLEWARE (ROUTES) HERE:
+app.use('/api/v1', require('./routes/kitten'))
 
 app.use('/', (req, res) => {
   res
@@ -31,9 +33,6 @@ app.use('/', (req, res) => {
   </body>
 </html>`)
 })
-
-// TODO: ADD (MOUNT) YOUR MIDDLEWARE (ROUTES) HERE:
-app.use('/api/v1', require('./routes/kitten'))
 
 // The following 2 `app.use`'s MUST follow ALL your routes/middleware
 app.use(notFound)
