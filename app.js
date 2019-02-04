@@ -13,7 +13,24 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(morgan(process.env.NODE_ENV !== 'production' ? 'dev' : 'combined'))
 app.use(cors({origin: true, credentials: true})) // <= Disable if you don't need CORS
 // TODO: Optional Static file handler:
-// app.use('/', express.static('./build'))
+
+app.use('/', (req, res) => {
+  res
+    .type('html')
+    .send(`<html>
+  <head><title>Adorbs as a Service</title></head>
+  <body style='font-family: sans-serif; font-size: 1.5em;'>
+    <a href='https://github.com/justsml/adorbs-as-a-service'>GitHub README</a>
+    <br />
+    <br />
+    Example Image (400px width, 500px height):<br />
+    <a href='https://adorbs-as-a-service.herokuapp.com/api/v1/w400/h500'>
+      <img src='https://adorbs-as-a-service.herokuapp.com/api/v1/w400/h500' alt='VIEW RANDOM IMAGE' />
+    </a>
+    <br />
+  </body>
+</html>`)
+})
 
 // TODO: ADD (MOUNT) YOUR MIDDLEWARE (ROUTES) HERE:
 app.use('/api/v1', require('./routes/kitten'))
